@@ -4,13 +4,14 @@ from uuid import UUID
 from sqlalchemy import (
     CheckConstraint,
     DateTime,
-    Float,
     ForeignKey,
     ForeignKeyConstraint,
     Index,
-    JSON,
     String,
     Text,
+    JSON,
+    UniqueConstraint,
+    Float,
     Uuid,
 )
 from sqlalchemy.orm import Mapped, mapped_column
@@ -75,6 +76,11 @@ class Incident(UUIDPrimaryKeyMixin, TimestampMixin, Base):
             ["organization_id", "environment_id"],
             ["environments.organization_id", "environments.id"],
             name="fk_incident_environment_tenant",
+        ),
+        UniqueConstraint(
+            "organization_id",
+            "id",
+            name="uq_incident_org_id",
         ),
         CheckConstraint(
             "severity IN ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL')",

@@ -105,9 +105,10 @@ def upgrade() -> None:
     sa.CheckConstraint("severity IN ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL')", name=op.f('ck_incidents_valid_incident_severity')),
     sa.CheckConstraint("status IN ('OPEN', 'INVESTIGATING', 'RESOLVED', 'CLOSED')", name=op.f('ck_incidents_valid_incident_status')),
     sa.ForeignKeyConstraint(['organization_id', 'environment_id'], ['environments.organization_id', 'environments.id'], name='fk_incident_environment_tenant'),
-    sa.ForeignKeyConstraint(['organization_id'], ['organizations.id'], name=op.f('fk_incidents_organization_id_organizations'), ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_incidents'))
-    )
+   sa.ForeignKeyConstraint(['organization_id'], ['organizations.id'], name=op.f('fk_incidents_organization_id_organizations'), ondelete='CASCADE'),
+sa.PrimaryKeyConstraint('id', name=op.f('pk_incidents')),
+sa.UniqueConstraint('organization_id', 'id', name='uq_incident_org_id')
+)
     op.create_index('ix_incidents_org_status', 'incidents', ['organization_id', 'status'], unique=False)
     op.create_table('services',
     sa.Column('organization_id', sa.Uuid(), nullable=False),
